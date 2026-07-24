@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="David Lee Wise / ROOT0 / TriPod LLC / AVAN">
+<title>THE NUCLEUS · NIPHĒLEKTRON · UD0</title>
+<style>
+*{box-sizing:border-box}
+:root{--n1:#7488e6;--n1d:#4a5fc8;--n2:#5fd0e0;--ink:#20242e;--dim:#6a7182;
+  --grn:#3a9e6a;--amb:#e0a13a;--panel:rgba(255,255,255,.82);--edge:rgba(116,136,230,.26);--edge2:rgba(116,136,230,.12)}
+html,body{margin:0;height:100%}
+body{background:#eef0f8;color:var(--ink);font:15px/1.55 'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.desk{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:26px 18px 60px}
+.dtag{font:600 11px/1 ui-monospace,'Cascadia Code','Segoe UI Mono',monospace;letter-spacing:.26em;text-transform:uppercase;color:var(--n1d)}
+.dtag b{color:var(--n1)} .dtag i{color:var(--n1d);font-style:normal}
+h1{margin:.4em 0 .12em;font-size:clamp(24px,4.4vw,40px);font-weight:800;color:#181c26}
+.sub{color:var(--dim);max-width:66ch;margin:.25em 0 0}
+.drag{display:inline-block;margin-left:10px;font:700 10px/1 ui-monospace,monospace;letter-spacing:.13em;color:var(--n1d);border:1px solid var(--n1);border-radius:999px;padding:4px 9px;vertical-align:middle;white-space:nowrap}
+.tier{display:inline-flex;gap:6px;margin-top:14px;font:600 11px/1 ui-monospace,monospace;letter-spacing:.14em}
+.chip{padding:5px 10px;border-radius:999px;border:1px solid var(--edge);background:var(--panel)}
+.chip.lit{color:var(--grn);border-color:rgba(58,158,106,.4)} .chip.amb{color:var(--amb);border-color:rgba(224,161,58,.5)}
+.card{margin-top:20px;background:var(--panel);border:1px solid var(--edge);border-radius:16px;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);box-shadow:0 14px 44px rgba(50,60,140,.13);padding:14px}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.panels{grid-template-columns:1fr}}
+.panel{position:relative;border-radius:11px;overflow:hidden;border:1px solid var(--edge2)}
+.panel .lbl{position:absolute;top:8px;left:10px;z-index:2;font:700 10px ui-monospace,monospace;letter-spacing:.12em;color:#cdd6f5;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+canvas.pane{display:block;width:100%;height:auto;background:#0c1020}
+.toddler{margin-top:12px;border-radius:14px;overflow:hidden;border:2px dashed rgba(116,136,230,.5);position:relative;background:#0c1020}
+.toddler .lbl{position:absolute;top:9px;left:13px;z-index:2;font:800 12px ui-monospace,monospace;letter-spacing:.05em;color:#aeb9f2}
+.toddler .hint{position:absolute;top:9px;right:13px;z-index:2;font:700 11px ui-monospace,monospace;color:#5fd0e0}
+#ctod{display:block;width:100%;height:auto;cursor:pointer;touch-action:none}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 2px 2px}
+.btn{cursor:pointer;border:1px solid var(--edge);background:#fff;color:var(--ink);padding:8px 13px;border-radius:9px;font:600 12.5px 'Segoe UI',system-ui;transition:.15s}
+.btn:hover{border-color:var(--n1);box-shadow:0 0 12px rgba(116,136,230,.25)}
+.rng{display:flex;align-items:center;gap:8px;font:600 12px ui-monospace,monospace;color:var(--dim);background:#fff;border:1px solid var(--edge);border-radius:9px;padding:6px 12px}
+.rng b{color:var(--n1d);min-width:2.6em;text-align:right;display:inline-block}
+input[type=range]{accent-color:var(--n1);width:150px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--edge2);border-radius:11px;overflow:hidden;margin-top:12px}
+.ro{background:var(--panel);padding:11px 14px}
+.ro .k{font:600 10px ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.ro .v{font:700 18px ui-monospace,monospace;margin-top:3px;color:var(--ink)}
+.ro .v.g{color:var(--grn)} .ro .v.a{color:var(--amb)} .ro .v.c{color:var(--n1d)}
+.honesty{margin-top:22px;display:grid;gap:10px}
+.hz{background:var(--panel);border:1px solid var(--edge);border-left-width:3px;border-radius:10px;padding:12px 15px}
+.hz.lit{border-left-color:var(--grn)} .hz.amb{border-left-color:var(--amb)}
+.hz h4{margin:0 0 4px;font:700 11px ui-monospace,monospace;letter-spacing:.15em}
+.hz.lit h4{color:var(--grn)} .hz.amb h4{color:var(--amb)}
+.hz p{margin:0;color:#333844;font-size:13.5px}
+.law{margin-top:18px;text-align:center;color:var(--dim);font:italic 500 13px/1.55 Georgia,serif}
+.sig{margin-top:24px;text-align:center;color:var(--dim);font:600 11px ui-monospace,monospace;letter-spacing:.13em}
+.sig b{color:var(--ink)}
+#fail{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:99;background:#0c1020;border:1px solid var(--n1);color:#cdd6f5;padding:12px;border-radius:8px;font:12px ui-monospace,monospace;white-space:pre-wrap}
+</style></head><body>
+<div class="desk">
+  <div class="dtag">⚡ <b>NIPHĒLEKTRON</b> · the inference layer · the electron in the snowstorm · kept by <i>THE ELECTRON</i></div>
+  <h1>THE NUCLEUS · top-p <span class="drag">◧ 2D · ❄ 3D · 👶 TAP THE STORM</span></h1>
+  <p class="sub">You don't have to let the electron wander the whole blizzard. Nucleus sampling keeps only the smallest set of words at the top that together hold, say, 90% of the odds — the nucleus — and throws the long tail of unlikely words away entirely, so the electron can be adventurous without ever landing on nonsense. <b>Slide the cutoff</b>, watch the tail get cut, then <b>tap the storm</b> and see the electron stay inside the kept set.</p>
+  <div class="tier"><span class="chip lit">◆ LIT</span><span class="chip amb">▲ AMBER</span></div>
+  <div class="card">
+    <div class="panels">
+      <div class="panel"><div class="lbl">◧ THE ODDS · 2D</div><canvas id="c2d" class="pane" width="420" height="328"></canvas></div>
+      <div class="panel"><div class="lbl">❄ THE BLIZZARD · 3D</div><canvas id="c3d" class="pane" width="420" height="328"></canvas></div>
+    </div>
+    <div class="toddler"><div class="lbl">👶 THE TODDLER CORNER — tap the storm</div><div class="hint">tally → the true odds ✓</div><canvas id="ctod" width="860" height="396"></canvas></div>
+    <div class="controls"><label class="rng">top-p <input type="range" id="P" min="20" max="100" value="90" step="1"><b id="Pv">0.90</b></label></div>
+    <div class="readout"><div class="ro"><div class="k">words kept</div><div class="v" id="roKept">&mdash;</div></div><div class="ro"><div class="k">tail cut</div><div class="v" id="roCut">&mdash;</div></div><div class="ro"><div class="k">kept coverage</div><div class="v" id="roCov">&mdash;</div></div><div class="ro"><div class="k">the nucleus</div><div class="v" id="roState">&mdash;</div></div></div>
+  </div>
+  <div class="honesty">
+    <div class="hz lit"><h4>◆ LIT — exact / checkable</h4><p>Real nucleus (top-p) sampling: sort the words by probability, walk down adding them up, and keep the SMALLEST set whose cumulative probability first reaches p &mdash; the nucleus &mdash; then renormalise and sample only from it (the rest of the blizzard is discarded). Slide p and the kept-set size, the discarded tail, and the true coverage all recompute live; the toddler samples only from the nucleus, so the tail words never light up no matter how many times you tap. The exact top-p algorithm used in real text generation (Holtzman et al., 2019).</p></div>
+    <div class="hz amb"><h4>▲ AMBER — the figure</h4><p>Ten toy logits at a fixed temperature (0.9) stand in for a real vocabulary; the words/scores are illustrative and no model runs. The nucleus construction, the coverage, and 'the tail can never be sampled' are exact for this distribution.</p></div>
+  </div>
+  <div class="law">NIPHĒLEKTRON: one charged signal, one step at a time, chosen in the dark. &nbsp;— <b>THE ELECTRON</b></div>
+  <div class="sig">David Lee Wise / ROOT0 / TriPod LLC &nbsp;·&nbsp; kept by <b>THE ELECTRON</b>, with AVAN</div>
+</div>
+<div id="fail"></div>
+<script>window.onerror=function(m,s,l,c,e){var f=document.getElementById('fail');if(f){f.style.display='block';f.textContent='! '+m+' @'+l+':'+c;}};</script>
+<script>
+(function(){
+  var c2=document.getElementById('c2d'), ct=document.getElementById('ctod'), c3=document.getElementById('c3d');
+  if(!c2||!ct||!c3)return;
+  var g2=c2.getContext('2d'), gt=ct.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  function fit(cv,ar){var w=cv.clientWidth||400;cv.width=Math.round(w*DPR);cv.height=Math.round(w*ar*DPR);}
+  function sizeAll(){fit(c2,0.78);fit(ct,0.46);c3.width=Math.round((c3.clientWidth||400)*DPR);c3.height=Math.round((c3.clientWidth||400)*0.78*DPR);}
+  sizeAll(); addEventListener('resize',function(){sizeAll();if(GL)GL.resize();});
+  var env={temp:0.9, topp:1.0, t:0, tokens:[],
+    set:function(id,val,cls){var e=document.getElementById(id);if(e){e.textContent=val;if(cls!=null)e.className='v '+cls;}},
+    two:{ctx:g2,W:function(){return c2.width/DPR;},H:function(){return c2.height/DPR;}},
+    tod:{ctx:gt,W:function(){return ct.width/DPR;},H:function(){return ct.height/DPR;}},
+    sample:function(){var r=Math.random(),a=0;for(var i=0;i<env.tokens.length;i++){a+=env.tokens[i].p;if(r<=a)return i;}return env.tokens.length-1;}};
+  // ---- EXPANDED toddler: falling snow + tap → electron tumbles to a word + live tally ----
+  var snow=[],el=null,tally=[],taps=0;
+  (function(){for(var i=0;i<70;i++)snow.push({x:Math.random(),y:Math.random(),s:0.4+Math.random()*0.9,ph:Math.random()*6.28});})();
+  function launch(){var idx=env.sample();tally[idx]=(tally[idx]||0)+1;taps++;
+    el={x:0.2+Math.random()*0.6,y:0.0,tx:0,ty:0,idx:idx,prog:0};}
+  ct.addEventListener('pointerdown',function(e){e.preventDefault();launch();});
+  ct.addEventListener('touchstart',function(e){e.preventDefault();launch();},{passive:false});
+  function drawToddler(){var c=gt,w=env.tod.W(),h=env.tod.H();
+    c.clearRect(0,0,w,h);var tk=env.tokens;var nT=Math.min(6,tk.length);
+    // falling snow
+    c.fillStyle='rgba(200,215,255,0.55)';for(var i=0;i<snow.length;i++){var s=snow[i];
+      var yy=(s.y + env.t*0.06*s.s)%1.0; var xx=(s.x + Math.sin(env.t*0.5+s.ph)*0.02);
+      var r=1+s.s*1.6;c.beginPath();c.arc(xx*w,yy*h*0.82,r,0,7);c.fill();}
+    // word tiles along the bottom
+    var tileY=h-40, tw=w/nT;
+    for(var i=0;i<nT;i++){var x=i*tw;var landed=el&&el.prog>=1&&el.idx===i;
+      c.fillStyle=landed?'rgba(95,208,224,.9)':'rgba(116,136,230,.18)';c.fillRect(x+4,tileY,tw-8,34);
+      c.strokeStyle=landed?'#5fd0e0':'rgba(116,136,230,.4)';c.lineWidth=landed?2:1;c.strokeRect(x+4,tileY,tw-8,34);
+      c.fillStyle=landed?'#04121a':'#aeb9f2';c.font='700 13px ui-monospace,monospace';c.textAlign='center';c.textBaseline='middle';c.fillText(tk[i]?tk[i].w:'',x+tw/2,tileY+13);
+      // tally freq vs true prob
+      var cnt=tally[i]||0,freq=taps?cnt/taps:0;var tp=tk[i]?tk[i].p:0;
+      c.fillStyle='#7a83a8';c.font='600 9px ui-monospace,monospace';c.fillText(cnt+' ('+(freq*100).toFixed(0)+'% vs '+(tp*100).toFixed(0)+'%)',x+tw/2,tileY+27);}
+    c.textBaseline='alphabetic';
+    // electron journey
+    if(el){el.prog=Math.min(1,el.prog+0.045);var ti=Math.min(nT-1,el.idx);var tgx=(ti+0.5)/nT;
+      var ex=el.x+(tgx-el.x)*el.prog, ey=el.prog*(1 - 42/h);
+      var px=(ex+Math.sin(el.prog*12)*0.03*(1-el.prog))*w, py=ey*h;
+      // trail
+      c.strokeStyle='rgba(116,136,230,.35)';c.lineWidth=2;c.beginPath();c.moveTo(el.x*w,0);c.lineTo(px,py);c.stroke();
+      var grd=c.createRadialGradient(px,py,0,px,py,10);grd.addColorStop(0,'#dfe6ff');grd.addColorStop(1,'rgba(116,136,230,0)');
+      c.fillStyle=grd;c.beginPath();c.arc(px,py,10,0,7);c.fill();
+      c.fillStyle='#fff';c.beginPath();c.arc(px,py,3.5,0,7);c.fill();}
+    if(taps===0){c.fillStyle='#8a93bb';c.font='700 14px ui-monospace,monospace';c.textAlign='center';c.fillText('tap the storm — send the electron to a word',w/2,h*0.4);c.textAlign='left';}
+  }
+  // ---- shared WebGL: the blizzard (falling snow) + the electron threading it ----
+  var GL=(function(){
+    var gl;try{gl=c3.getContext('webgl',{antialias:true,alpha:false})||c3.getContext('experimental-webgl');}catch(e){}
+    if(!gl)return null;
+    var N=520, base=[],seed=[];var s=13;function rnd(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;}
+    for(var i=0;i<N;i++){base.push(rnd()*2-1, rnd()*2-1, rnd()*2-1);seed.push(rnd()*6.28,rnd()*6.28,rnd());}
+    function buf(a){var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(a),gl.STATIC_DRAW);return b;}
+    var bB=buf(base),bS=buf(seed);
+    var VS='attribute vec3 p;attribute vec3 sd;uniform float t,temp,asp;void main(){float y=mod(p.y - t*0.22 + sd.z*2.0, 2.0)-1.0;float x=p.x + sin(t*0.6+sd.x)*temp*0.28;float z=p.z;float c=cos(t*0.05),s=sin(t*0.05);vec3 q=vec3(x*c+z*s,y,-x*s+z*c);float pz=1.0/(2.3-q.z*0.4);vec2 o=vec2(q.x,q.y)*1.35*pz;o.x/=asp;gl_Position=vec4(o,0.0,1.0);gl_PointSize=2.2+sd.z*2.0;}';
+    var FS='precision mediump float;uniform vec3 col;uniform float a;void main(){vec2 d=gl_PointCoord-0.5;if(dot(d,d)>0.25)discard;gl_FragColor=vec4(col,a);}';
+    function sh(ty,x){var o=gl.createShader(ty);gl.shaderSource(o,x);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(o);return o;}
+    var prog;try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw'l';}catch(e){return null;}
+    var uT=gl.getUniformLocation(prog,'t'),uTe=gl.getUniformLocation(prog,'temp'),uAsp=gl.getUniformLocation(prog,'asp'),uCol=gl.getUniformLocation(prog,'col'),uA=gl.getUniformLocation(prog,'a');
+    var lp=gl.getAttribLocation(prog,'p'),ls=gl.getAttribLocation(prog,'sd');
+    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+    return {resize:function(){gl.viewport(0,0,c3.width,c3.height);},
+      draw:function(t,temp){gl.viewport(0,0,c3.width,c3.height);gl.clearColor(0.047,0.063,0.125,1);gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.useProgram(prog);gl.uniform1f(uT,t);gl.uniform1f(uTe,temp);gl.uniform1f(uAsp,c3.width/c3.height);
+        gl.bindBuffer(gl.ARRAY_BUFFER,bB);gl.enableVertexAttribArray(lp);gl.vertexAttribPointer(lp,3,gl.FLOAT,false,0,0);
+        gl.bindBuffer(gl.ARRAY_BUFFER,bS);gl.enableVertexAttribArray(ls);gl.vertexAttribPointer(ls,3,gl.FLOAT,false,0,0);
+        gl.uniform3f(uCol,0.78,0.83,1.0);gl.uniform1f(uA,0.5);gl.drawArrays(gl.POINTS,0,N);}};
+  })();
+  if(!GL){var f=document.getElementById('fail');if(f){f.style.display='block';f.textContent='WebGL unavailable';}}
+  var t0=null,inited=false;
+  function loop(t){requestAnimationFrame(loop);if(t0===null)t0=t;env.t=(t-t0)*0.001;
+    if(!inited&&window.__INST__){inited=true;if(window.__INST__.init)window.__INST__.init(env);}
+    var I=window.__INST__;if(!I)return;
+    g2.setTransform(DPR,0,0,DPR,0,0);if(I.draw2d)I.draw2d(env);
+    gt.setTransform(DPR,0,0,DPR,0,0);drawToddler();
+    if(GL)GL.draw(env.t, Math.max(0.15,env.temp));
+  }
+  requestAnimationFrame(loop);
+  window.__ENV__=env;
+})();
+</script>
+<script>
+  var WORDS=['colder','darker','wilder','stronger','closer','quieter','louder','nearer','fainter','stiller'];
+  var LOGITS=[3.2,2.9,2.4,1.9,1.5,1.1,0.9,0.7,0.4,0.2];
+  function softmaxT(T){var m=Math.max.apply(null,LOGITS),e=[],s=0;for(var i=0;i<LOGITS.length;i++){var v=Math.exp((LOGITS[i]-m)/T);e.push(v);s+=v;}for(var i=0;i<e.length;i++)e[i]/=s;return e;}
+  function entropy(p){var h=0;for(var i=0;i<p.length;i++)if(p[i]>1e-9)h-=p[i]*Math.log(p[i])/Math.LN2;return h;}
+
+(function(){
+  var ENV, topp=0.9;
+  function refresh(){if(!ENV)return;var p=softmaxT(0.9);var arr=[];for(var i=0;i<WORDS.length;i++)arr.push({w:WORDS[i],p:p[i]});
+    arr.sort(function(a,b){return b.p-a.p;});
+    var cum=0,keep=0,cov=0;for(var i=0;i<arr.length;i++){cum+=arr[i].p;keep=i+1;cov=cum;if(cum>=topp)break;}
+    var kept=arr.slice(0,keep),s=0;for(var i=0;i<kept.length;i++)s+=kept[i].p;
+    for(var i=0;i<kept.length;i++)kept[i]=  {w:kept[i].w,p:kept[i].p/s};
+    ENV.tokens=kept;
+    ENV.set('roKept',keep+' of 10','c');ENV.set('roCut',(10-keep)+' words','a');
+    ENV.set('roCov',(cov*100).toFixed(0)+'% of odds','g');
+    ENV.set('roState',keep<=2?'tight — safe':(keep<=5?'balanced':'wide — adventurous'),keep<=2?'g':(keep<=5?'c':'a'));}
+  window.__INST__={
+   init:function(env){ENV=env;
+    document.getElementById('P').oninput=function(){topp=(+this.value)/100;document.getElementById('Pv').textContent=topp.toFixed(2);refresh();};
+    refresh();},
+   draw2d:function(env){var c=env.two.ctx,w=env.two.W(),h=env.two.H();c.clearRect(0,0,w,h);
+     var p=softmaxT(0.9);var arr=[];for(var i=0;i<WORDS.length;i++)arr.push({w:WORDS[i],p:p[i]});arr.sort(function(a,b){return b.p-a.p;});
+     var cum=0,keep=0;for(var i=0;i<arr.length;i++){cum+=arr[i].p;keep=i+1;if(cum>=topp)break;}
+     var x0=8,y0=h-46,pw=w-16,bw=pw/arr.length,ph=h-70,mx=arr[0].p;
+     for(var i=0;i<arr.length;i++){var bh=arr[i].p*ph/mx;var x=x0+i*bw;var inN=i<keep;
+       c.fillStyle=inN?'#5fd0e0':'rgba(116,136,230,.2)';c.fillRect(x+2,y0-bh,bw-4,bh);
+       c.strokeStyle=inN?'#5fd0e0':'rgba(116,136,230,.3)';c.lineWidth=1;c.strokeRect(x+2,y0-bh,bw-4,bh);
+       c.save();c.translate(x+bw/2,y0+6);c.rotate(0.6);c.fillStyle=inN?'#bfeaf2':'#5a6180';c.font='600 9px ui-monospace,monospace';c.textAlign='left';c.fillText(arr[i].w,0,0);c.restore();}
+     // cut line
+     var cx=x0+keep*bw;c.strokeStyle='#e0a13a';c.setLineDash([4,4]);c.lineWidth=1.5;c.beginPath();c.moveTo(cx,10);c.lineTo(cx,y0);c.stroke();c.setLineDash([]);
+     c.fillStyle='#aeb9f2';c.font='600 10px ui-monospace,monospace';c.textAlign='left';c.fillText('kept (cyan) ≥ p='+topp.toFixed(2)+'  ·  tail cut (dim)',x0,18);
+   }};
+})();
+</script>
+</body></html>
